@@ -1,0 +1,44 @@
+#!/bin/bash
+
+usage() {
+  echo 'Usage: docker run -d factorish/syslog [-t tcp|udp|socket]'
+  echo '  -t protocol to listen on: tcp,udp,socket, default: tcp'
+  echo
+  echo '==== Examples ====='
+  echo
+  echo 'Listen on TCP 5140 on host:'
+  echo '$ docker run -d -p 5140:514 factorish/syslog -t tcp'
+  echo
+  echo 'Listen on UDP 5140 on host:'
+  echo '$ docker run -d -p 5140:514/udp factorish/syslog -t udp'
+  echo
+  echo 'Listen on socket:'
+  echo '$ docker run -d --name syslog -v /syslog/socket factorish/syslog -t socket'
+  exit 1
+}
+
+while getopts "t:" flag; do
+    case "$flag" in
+        t) TYPE=${OPTARG};;
+        h) usage;;
+        *) usage;;
+    esac
+done
+
+case "$TYPE" in
+    "tcp")    IN="TCP4-LISTEN:514";;
+    "udp")    IN="UDP4-LISTEN:514";;
+    "socket") IN="UNIX-LISTEN:/syslog/socket";;
+    *)        echo "-t must be one of tcp,udp,socket"
+              usage
+              ;;
+esac
+
+set -eo pipefail
+
+trap on_exit INT TERM
+
+echo "==> syslog listening on $TYPE"
+exec socat -t0 -T0 -u $IN,reuseaddr,fork -
+
+wait
