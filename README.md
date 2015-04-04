@@ -2,7 +2,7 @@
 
 ## About
 
-A very simple `socat` based syslog server designed to listen to syslog on `TCP`, `UDP` or a UNIX socket `/tmp/syslog.sock` and print any messages to `stdout` so that they get picked up by the docker log system and can be accessed via tools like [logspout](http://github.com/gliderlabs/logspout).
+A very simple `socat` based syslog server designed to listen to syslog on `TCP`, `UDP` or a UNIX socket `/syslog/sock` and print any messages to `stdout` so that they get picked up by the docker log system and can be accessed via tools like [logspout](http://github.com/gliderlabs/logspout).
 
 ## Usage
 
